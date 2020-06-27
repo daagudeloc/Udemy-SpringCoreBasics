@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Spring Core Online Tutorial</title>
+	
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
+		th:href="@{/webjars/bootstrap/4.5.0/css/bootstrap.min.css}" />
+		
+	<script src="https://code.jquery.com/jquery-3.5.1.min.js"
+		th:src="@{/webjars/jquery/3.5.1/jquery.min.js}"></script>
+
+    <link href="../static/css/spring-core.css"
+        th:href="@{css/spring-core.css}" rel="stylesheet" media="screen" />
+</head>
+<body>
+	<div class="container">
+	
+		<div th:if="${not #lists.isEmpty(customers)}">
+			<table class="table table-striped">
+				<tr>
+					<th>Id</th>
+					<th>First Name</th>
+					<th>Last Name</th>
+					<th>Email</th>
+					<th>Phone NumbeR</th>
+					<th>Address Line One</Th>
+					<th>Address Line Two</Th>
+					<th>City</th> 
+					<th>State</th>
+					<th>Zip Code</th>
+					<th colspan="3">Client details</th>
+				</tr>
+				<tr th:each="customer : ${customers}">
+					<td th:text="${customer.id}"></td>
+					<td th:text="${customer.firstName}"></td>
+					<td th:text="${customer.lastName}"></td>
+					<td th:text="${customer.email}"></td>
+					<td th:text="${customer.phoneNumber}"></td>
+					<td th:text="${customer.addressLineOne}"></td>
+					<td th:text="${customer.addressLineTwo}"></td>
+					<td th:text="${customer.city}"></td> 
+					<td th:text="${customer.state}"></td>
+					<td th:text="${customer.zipCode}"></td>
+					<td><a th:href="${'/customer/' + customer.id}">Details</a></td>
+					<td><a th:href="${'/customer/edit/' + customer.id}">Edit</a></td>
+					<td><a th:href="${'/customer/delete/' + customer.id}">Delete</a></td>
+				</tr>
+			</table>			
+		</div>
+ 		<div class="row">
+        	<div class="col-sm-3">
+            	<a href="/">Index</a>
+        	</div>
+    	</div>
+ 		<div class="row">
+        	<div class="col-sm-3">
+            	<a href="/customer/new">New Customer</a>
+        	</div>
+    	</div>
+		
+	</div>
+</body>
+</html>
