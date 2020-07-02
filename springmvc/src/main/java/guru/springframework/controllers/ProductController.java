@@ -1,5 +1,8 @@
 package guru.springframework.controllers;
 
+import static guru.springframework.controllers.constants.TemplateConstants.*;
+import static guru.springframework.controllers.constants.UrlConstants.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,40 +23,40 @@ public class ProductController {
 		this.productService = productService;
 	}
 	
-	@RequestMapping("/products")
+	@RequestMapping(PRODUCTS_URL)
 	public String listProducts(Model model) {
 		model.addAttribute("products", productService.listAll());
-		return "product/products";
+		return getProductTemplate(PRODUCTS);
 	}
 	
-	@RequestMapping("/product/{id}")
+	@RequestMapping(PRODUCT_ID_URL)
 	public String getProductById(@PathVariable Integer id, Model model) {
 		model.addAttribute("product", productService.getObjectById(id));
-		return "product/product";
+		return getProductTemplate(PRODUCT);
 	}
 	
-	@RequestMapping("/product/edit/{id}")
+	@RequestMapping(EDIT_PRODUCT_URL)
 	public String editProductById(@PathVariable Integer id, Model model) {
 		model.addAttribute("product", productService.getObjectById(id));
-		return "product/product-form";
+		return getProductTemplate(PRODUCT_FORM);
 	}
 	
-	@RequestMapping("/product/delete/{id}")
+	@RequestMapping(DELETE_PRODUCT_URL)
 	public String deleteProductById(@PathVariable Integer id) {
 		productService.deleteObject(id);
-		return "redirect:/products";
+		return redirectTo(PRODUCTS_URL);
 	}
 	
-	@RequestMapping("/product/new")
+	@RequestMapping(NEW_PRODUCT_URL)
 	public String createNewProduct(Model model) {
 		model.addAttribute("product", new Product());
-		return "product/product-form";
+		return getProductTemplate(PRODUCT_FORM);
 	}
 	
-	@RequestMapping(value = "/product", method = RequestMethod.POST)
+	@RequestMapping(value = PRODUCT_URL, method = RequestMethod.POST)
 	public String createOrUpdateProduct(Product product) {
 		Product modifiedProduct = productService.createOrUpdateObject(product);
-		return String.format("redirect:/product/%1$s", modifiedProduct.getId());
+		return redirectTo(PRODUCT_URL, modifiedProduct.getId());
 	}
 	
 }

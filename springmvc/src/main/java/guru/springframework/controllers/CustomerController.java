@@ -1,5 +1,8 @@
 package guru.springframework.controllers;
 
+import static guru.springframework.controllers.constants.TemplateConstants.*;
+import static guru.springframework.controllers.constants.UrlConstants.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,40 +23,40 @@ public class CustomerController {
 		this.customerService = productService;
 	}
 	
-	@RequestMapping("/customers")
+	@RequestMapping(CUSTOMERS_URL)
 	public String listCustomers(Model model) {
 		model.addAttribute("customers", customerService.listAll());
-		return "customer/customers";
+		return getCustomerTemplate(CUSTOMERS);
 	}
 	
-	@RequestMapping("/customer/{id}")
+	@RequestMapping(CUSTOMER_ID_URL)
 	public String getCustomerById(@PathVariable Integer id, Model model) {
 		model.addAttribute("customer", customerService.getObjectById(id));
-		return "customer/customer";
+		return getCustomerTemplate(CUSTOMER);
 	}
 	
-	@RequestMapping("/customer/edit/{id}")
+	@RequestMapping(EDIT_CUSTOMER_URL)
 	public String editCustomerById(@PathVariable Integer id, Model model) {
 		model.addAttribute("customer", customerService.getObjectById(id));
-		return "customer/customer-form";
+		return getCustomerTemplate(CUSTOMER_FORM);
 	}
 	
-	@RequestMapping("/customer/delete/{id}")
+	@RequestMapping(DELETE_CUSTOMER_URL)
 	public String deleteCustomerById(@PathVariable Integer id) {
 		customerService.deleteObject(id);
-		return "redirect:/customers";
+		return redirectTo(CUSTOMERS_URL);
 	}
 	
-	@RequestMapping("/customer/new")
+	@RequestMapping(NEW_CUSTOMER_URL)
 	public String createNewCustomer(Model model) {
 		model.addAttribute("customer", new Customer());
-		return "customer/customer-form";
+		return getCustomerTemplate(CUSTOMER_FORM);
 	}
 	
-	@RequestMapping(value = "/customer", method = RequestMethod.POST)
+	@RequestMapping(value = CUSTOMER_URL, method = RequestMethod.POST)
 	public String createOrUpdateCustomer(Customer customer) {
 		Customer modifiedCustomer = customerService.createOrUpdateObject(customer);
-		return String.format("redirect:/customer/%1$s", modifiedCustomer.getId());
+		return redirectTo(CUSTOMER_URL, modifiedCustomer.getId());
 	}
 	
 }
