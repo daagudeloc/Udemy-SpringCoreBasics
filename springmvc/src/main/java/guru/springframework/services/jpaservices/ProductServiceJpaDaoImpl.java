@@ -1,26 +1,18 @@
-package guru.springframework.services;
+package guru.springframework.services.jpaservices;
 
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import guru.springframework.domain.Product;
+import guru.springframework.services.ProductService;
 
 @Service
 @Profile("jpadao")
-public class ProductServiceJpaDaoImpl implements ProductService {
-
-	private EntityManagerFactory factory;
-
-	@PersistenceUnit
-	public void setFactory(EntityManagerFactory factory) {
-		this.factory = factory;
-	}
+public class ProductServiceJpaDaoImpl extends AbstractJpaDaoService implements ProductService {
 
 	@Override
 	public List<Product> listAll() {

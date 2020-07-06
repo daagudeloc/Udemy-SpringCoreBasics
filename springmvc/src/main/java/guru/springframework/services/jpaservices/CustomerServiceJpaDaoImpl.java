@@ -1,26 +1,29 @@
-package guru.springframework.services;
+package guru.springframework.services.jpaservices;
+
+import static java.util.Objects.nonNull;
 
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import guru.springframework.domain.Customer;
+import guru.springframework.services.CustomerService;
+import guru.springframework.services.security.EncryptionService;
 
 @Service
 @Profile("jpadao")
-public class CustomerServiceJpaDaoImpl implements CustomerService {
+public class CustomerServiceJpaDaoImpl extends AbstractJpaDaoService implements CustomerService {
 
-	private EntityManagerFactory factory;
+	private EncryptionService encryptionService;
 
-	@PersistenceUnit
-	public void setFactory(EntityManagerFactory factory) {
-		this.factory = factory;
-	}
+    @Autowired
+    public void setEncryptionService(EncryptionService encryptionService) {
+        this.encryptionService = encryptionService;
+    }
 
 	@Override
 	public List<Customer> listAll() {
@@ -37,11 +40,17 @@ public class CustomerServiceJpaDaoImpl implements CustomerService {
 	}
 
 	@Override
-	public Customer createOrUpdateObject(final Customer productToSave) {
+	public Customer createOrUpdateObject(final Customer customerToSave) {
 		final EntityManager manager = factory.createEntityManager();
 		
 		manager.getTransaction().begin();
-		Customer modifiedCustomer = manager.merge(productToSave); 
+		
+		if (nonNull(customerToSave.getUser()) && nonNull(customerToSave.getUser().getPassword())) {
+			customerToSave.getUser().setEncryptedPassword(
+					encryptionService.encryptString(customerToSave.getUser().getPassword()));
+		}
+		
+		Customer modifiedCustomer = manager.merge(customerToSave); 
 		manager.getTransaction().commit();
 		
 		return modifiedCustomer;

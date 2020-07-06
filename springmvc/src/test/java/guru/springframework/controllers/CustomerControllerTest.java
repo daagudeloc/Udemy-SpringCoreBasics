@@ -129,8 +129,6 @@ public class CustomerControllerTest {
 
         Customer returnCustomer = new Customer();
         returnCustomer.setId(id);
-        returnCustomer.setAddressLineOne(addressLineOne);
-        returnCustomer.setCity(city);
         returnCustomer.setEmail(email);
 
         when(customerService.createOrUpdateObject(Mockito.<Customer>any())).thenReturn(returnCustomer);
@@ -144,16 +142,12 @@ public class CustomerControllerTest {
                 .andExpect(view().name(redirectTo(CUSTOMER_URL, ID_VALUE)))
                 .andExpect(model().attribute(CUSTOMER, instanceOf(Customer.class)))
                 .andExpect(model().attribute(CUSTOMER, hasProperty(ID, is(id))))
-                .andExpect(model().attribute(CUSTOMER, hasProperty(ADDRESS_LINE_ONE, is(addressLineOne))))
-                .andExpect(model().attribute(CUSTOMER, hasProperty(CITY, is(city))))
                 .andExpect(model().attribute(CUSTOMER, hasProperty(EMAIL, is(email))));
 
         ArgumentCaptor<Customer> boundCustomer = ArgumentCaptor.forClass(Customer.class);
         verify(customerService).createOrUpdateObject(boundCustomer.capture());
 
         assertEquals(id, boundCustomer.getValue().getId());
-        assertEquals(addressLineOne, boundCustomer.getValue().getAddressLineOne());
-        assertEquals(city, boundCustomer.getValue().getCity());
         assertEquals(email, boundCustomer.getValue().getEmail());
     }
 

@@ -2,6 +2,8 @@ package guru.springframework.services;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 
 import java.util.List;
 
@@ -12,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import guru.springframework.domain.Customer;
+import guru.springframework.domain.User;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -48,8 +51,8 @@ public class CustomerServiceJpaDaoImplTest {
 	public void shouldCreateCustomer() {
 		
 		System.out.println(String.format("Test for create new customer: Currently, there are (%1$d) Customers", customerCount));
-		final Customer product = createCustomer(++customerCount);
-		customerService.createOrUpdateObject(product);
+		final Customer customer = createCustomer(++customerCount);
+		customerService.createOrUpdateObject(customer);
 		final List<Customer> customers = (List<Customer>) customerService.listAll();
 		
 		System.out.println(String.format("After the test, there are (%1$d) Customers", customers.size()));
@@ -58,15 +61,29 @@ public class CustomerServiceJpaDaoImplTest {
 	}
 
 	@Test
+	public void shouldSaveWithUser() {
+		
+		final Customer customer = createCustomer(++customerCount);
+		final User user = new User();
+		user.setId(10);
+		user.setUsername("User 01");
+		user.setPassword("Very strong password");
+		customer.setUser(user);
+		
+		Customer savedCustomer = customerService.createOrUpdateObject(customer);
+				
+		assertThat(savedCustomer.getUser().getId(), is(not(nullValue())));
+	}
+
+	@Test
 	public void shouldUpdateCustomer() {
 		
-		Customer product = customerService.getObjectById(2);
-		product.setFirstName("New first name");
-		customerService.createOrUpdateObject(product);
-		Customer retrievedCustomerFromDb = customerService.getObjectById(2);
+		Customer customer = customerService.getObjectById(2);
+		customer.setFirstName("New first name");
+		Customer retrievedCustomerFromDb = customerService.createOrUpdateObject(customer);
 		
 		System.out.println("Test for specific customer");
-		assertThat(product.getFirstName(), is(retrievedCustomerFromDb.getFirstName()));
+		assertThat(customer.getFirstName(), is(retrievedCustomerFromDb.getFirstName()));
 	}
 	
 	@Test
@@ -95,11 +112,6 @@ public class CustomerServiceJpaDaoImplTest {
     	customer.setLastName(String.format("Customer %1$02d LN", customerId));
     	customer.setEmail(String.format("customer%1$s@domain.com", customerId));
     	customer.setPhoneNumber("3214569870");
-    	customer.setAddressLineOne("Address line one");
-    	customer.setAddressLineTwo("Address line two");
-    	customer.setCity("City"); 
-    	customer.setState("State");
-    	customer.setZipCode("111705");
         
         return customer;
 	}
